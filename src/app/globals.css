@@ -2,20 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    @apply bg-gray-900;
-    @apply text-white
+body {
+  @apply bg-gray-900;
+  @apply text-white;
 }
-
-::-webkit-scrollbar{
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
     width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-700;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-800;
+  }
 }
-::-webkit-scrollbar-track{
-    @apply bg-gray-700
-}
-::-webkit-scrollbar-thumb{
- @apply bg-gray-800
-}
-.hero-image{
-    box-shadow: 0 0 4px 1px #eab308;
+.hero-image {
+  box-shadow: 0 0 4px 1px #eab308;
 }

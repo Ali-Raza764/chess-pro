@@ -6,7 +6,7 @@ import { IoDiamondSharp } from "react-icons/io5";
 export const links = [
   {
     name: "Home",
-    href: "/",
+    href: "/home",
     icon: MdHome,
   },
   {

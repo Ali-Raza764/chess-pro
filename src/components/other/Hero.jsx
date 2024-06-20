@@ -18,7 +18,7 @@ const hero = () => {
             When you see a good move, look for a better one.
           </p>
           <div className="mt-2">
-            <Link href="/play">
+            <Link href="/home">
               <button className="text-gray-900 font-semibold bg-yellow-500 border-0 py-2 px-6 focus:outline-none hover:bg-yellow-600 rounded text-lg">
                 Play A Game
               </button>
