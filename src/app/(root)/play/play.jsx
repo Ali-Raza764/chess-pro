@@ -40,7 +40,7 @@ const Play = ({ roomId, timeSesonds }) => {
       socket.off("userconnected");
       socket.off("makemove");
     };
-  }, [roomId]);
+  }, [roomId, rematch]);
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).catch((err) => {

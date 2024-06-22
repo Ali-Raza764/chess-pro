@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { useMediaQuery } from "react-responsive";
@@ -32,7 +32,7 @@ export default function Board({ side, roomId, players, time }) {
   useEffect(() => {
     socket.on("sendresign", (res) => {
       setGameover(true);
-      playSound(sounds.CheckmateSound)
+      playSound(sounds.CheckmateSound);
       setIsBlackPaused(true);
       setIsWhitePaused(true);
       setMessage(res.type);
@@ -55,6 +55,10 @@ export default function Board({ side, roomId, players, time }) {
       socket.off("makemove");
     };
   }, [game]);
+
+  const handleGameover = useCallback(() => {
+    setGameover(true);
+  }, []);
 
   const setOpponentPieces = (move) => {
     if (gameover) return;
@@ -116,7 +120,7 @@ export default function Board({ side, roomId, players, time }) {
 
       return move;
     } catch (error) {
-      return null
+      return null;
     }
   };
 
@@ -192,12 +196,12 @@ export default function Board({ side, roomId, players, time }) {
             <Clock
               initialTime={time}
               isPaused={isWhitePaused}
-              setGameover={setGameover}
+              setGameover={handleGameover}
             />
             <Clock
               initialTime={time}
               isPaused={isBlackPaused}
-              setGameover={setGameover}
+              setGameover={handleGameover}
             />
           </div>
         </div>

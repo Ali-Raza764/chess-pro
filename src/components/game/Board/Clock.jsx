@@ -14,7 +14,7 @@ const Clock = ({ initialTime, isPaused, setGameover }) => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isPaused, time]);
+  }, [isPaused, time, setGameover]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);

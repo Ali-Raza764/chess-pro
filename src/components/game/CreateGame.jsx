@@ -20,7 +20,7 @@ const CreateGame = ({ name, seconds }) => {
     return () => {
       socket.off("game_found");
     };
-  }, []);
+  }, [router]);
 
   const handleClick = () => {
     //* The matching socket will call the game_found socket in the useEffect
