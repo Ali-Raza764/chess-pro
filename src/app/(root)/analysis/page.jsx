@@ -1,7 +1,11 @@
-import React from "react";
+import Analysis from "./Analysis";
 
-const page = () => {
-  return <div>page</div>;
+const AnalysisPage = () => {
+  return (
+    <main className="min-h-screen w-full p-6">
+      <Analysis />
+    </main>
+  );
 };
 
-export default page;
+export default AnalysisPage;

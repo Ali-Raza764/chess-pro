@@ -14,7 +14,7 @@ const CreateGame = ({ name, seconds }) => {
   useEffect(() => {
     socket.on("game_found", (data) => {
       setLoading(false);
-      router.push(`/play?roomId=${data.roomId}&time=${data.seconds}`);
+      router.push(`/game?roomId=${data.roomId}&time=${data.seconds}&type=matching`);
     });
 
     return () => {

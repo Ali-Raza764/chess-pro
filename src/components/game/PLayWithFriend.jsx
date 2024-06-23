@@ -19,7 +19,7 @@ const PLayWithFriend = ({ timeFormats }) => {
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
 
-    router.push(`/play?roomId=${roomId}&time=${selectedTime}`);
+    router.push(`/game?roomId=${roomId}&time=${selectedTime}&type=link`);
   };
 
   const handleSubmit = (e) => {

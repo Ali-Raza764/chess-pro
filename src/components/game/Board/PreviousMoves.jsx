@@ -19,7 +19,7 @@ const PreviousMoves = ({ moves }) => {
   }
 
   return (
-    <div className="w-full h-[50vh] overflow-y-auto bg-white bg-opacity-20 backdrop-blur-md rounded-lg border-gray-500 border-opacity-30 shadow-lg p-4 border-2">
+    <div className="w-full min-h-[30vh] max-h-[40vh] overflow-y-auto bg-white bg-opacity-20 backdrop-blur-md rounded-lg border-gray-500 border-opacity-30 shadow-lg p-4 border-2">
       <h1 className="text-3xl font-bold font-sans">Moves</h1>
 
       <table className="border shadow w-full">

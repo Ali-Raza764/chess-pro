@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import { socket } from "@/utils/socket/socket";
 import { FaClipboard } from "react-icons/fa";
 import Board from "@/components/game/Board";
+import { redirect } from "next/navigation";
 
-const Play = ({ roomId, timeSesonds }) => {
+const Play = ({ roomId, timeSesonds, type }) => {
   const [players, setPlayers] = useState([]);
   const [data, setData] = useState({});
   const [error, setError] = useState("");

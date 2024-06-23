@@ -1,12 +1,12 @@
 import { FcAbout } from "react-icons/fc";
-import {  MdHome, MdLogin } from "react-icons/md";
-import { FaPlayCircle } from "react-icons/fa";
+import { MdHome, MdLogin } from "react-icons/md";
+import { FaFish, FaPlayCircle } from "react-icons/fa";
 import { IoDiamondSharp } from "react-icons/io5";
 
 export const links = [
   {
     name: "Home",
-    href: "/home",
+    href: "/",
     icon: MdHome,
   },
   {
@@ -20,9 +20,9 @@ export const links = [
     icon: IoDiamondSharp,
   },
   {
-    name: "SignUp",
-    href: "/signup",
-    icon: MdLogin,
+    name: "Analysis",
+    href: "/analysis",
+    icon: FaFish,
   },
   {
     name: "About",
