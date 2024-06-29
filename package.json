@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.8",
+    "chessops": "^0.14.1",
     "next": "14.2.4",
     "nextjs-toploader": "^1.6.12",
     "react": "^18",

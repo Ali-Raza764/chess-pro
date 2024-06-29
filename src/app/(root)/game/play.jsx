@@ -1,88 +1,107 @@
 "use client";
-import React, { useEffect, useState } from "react";
-
 import { socket } from "@/utils/socket/socket";
-import { FaClipboard } from "react-icons/fa";
-import Board from "@/components/game/Board";
-import { redirect } from "next/navigation";
+import { Chess } from "chess.js";
+import React, { useEffect, useState } from "react";
+import Board from "../../../components/game/Board";
+import Users from "@/components/game/online/Users";
+import GameActions from "@/components/game/online/GameActions";
+import CreateGame from "@/components/game/online/CreateGame";
+import RematchButton from "@/components/game/online/RematchButton";
 
 const Play = ({ roomId, timeSesonds, type }) => {
-  const [players, setPlayers] = useState([]);
-  const [data, setData] = useState({});
-  const [error, setError] = useState("");
+  const [game, setGame] = useState(new Chess());
+  const [gameInfo, setGameInfo] = useState(null);
+  const [players, setPlayers] = useState(null);
+  const [gameOver, setGameOver] = useState(false);
   const [rematch, setRematch] = useState(false);
 
-  useEffect(() => {
-    socket.emit("create_room", roomId, "Guest", (response) => {
-      if (response.success) {
-        setData(response);
-      } else {
-        setError(response.message);
-      }
-    });
-
-    socket.on("sendrematch", () => {
-      setRematch(!rematch);
-    });
-
-    socket.emit("getUsers", roomId, (response) => {
-      if (response.success) {
-        setPlayers(response.players);
-      } else {
-        console.error("Failed to fetch users:", response.message);
-      }
-    });
-
-    socket.on("userconnected", (response) => {
-      setPlayers(response.players);
-    });
-
-    return () => {
-      socket.off("userconnected");
-      socket.off("makemove");
-    };
-  }, [roomId, rematch]);
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).catch((err) => {
-      console.error("Failed to copy text: ", err);
-    });
+  const setOpponentPieces = (move) => {
+    try {
+      const madeMove = game.move({
+        from: move.from,
+        to: move.to,
+        promotion: move.promotion || "q",
+      });
+      setGame(new Chess(game.fen()));
+      //   game.turn
+      //   controlSounds(madeMove);
+    } catch (error) {}
   };
 
-  if (players.length < 2) {
+  useEffect(() => {
+    if ((roomId && gameInfo === null) || rematch) {
+      socket.emit("create_room", roomId, "Guest", (response) => {
+        if (response.success) {
+          setGameInfo(response);
+          setGameOver(false);
+        }
+      });
+    }
+
+    //* Get Players Details
+    if (players === null || players.length < 2) {
+      socket.emit("getUsers", roomId, (response) => {
+        if (response.success) {
+          setPlayers(response.players);
+        } else {
+          console.error("Failed to fetch users:", response.message);
+        }
+      });
+    }
+
+    //* Handle the Remote opponent Move
+    socket.on("opponentMoved", (move) => {
+      setOpponentPieces(move);
+    });
+
+    //*Handle Opponent Resignation
+    socket.on("sendresign", (res) => {
+      setGameOver(true);
+    });
+
+    //* handle Game Rematch
+    socket.on("sendrematch", () => {
+      setRematch(!rematch);
+      setGameOver(false);
+      setGame(new Chess());
+    });
+  }, [roomId, game, rematch]);
+
+  const pieceMoved = async (madeMove) => {
+    socket.emit("move", madeMove, gameInfo?.roomId);
+  };
+
+  const renderComponents = () => {
     return (
-      <div className="min-h-screen w-full">
-        <div className="h-[25rem] w-[25rem] flex items-center justify-center flex-col gap-4">
-          <p className="text-lg font-medium">
-            Waiting fot Other Player To Join the game
-          </p>
-          <button
-            className="border shadow rounded-md p-2 bg-gray-900 hover:bg-gray-800 transition text-white text-lg font-semibold flex items-center justify-center gap-6"
-            onClick={() => copyToClipboard(window.location.href)}
-          >
-            Copy Game Link
-            <FaClipboard />
-          </button>
-        </div>
+      <div className="h-full w-full pb-6">
+        <Users players={players} />
+        {gameOver ? (
+          <div className="flex gap-4">
+            <CreateGame name={"New"} seconds={timeSesonds} />
+            <RematchButton roomId={gameInfo.roomId} />
+          </div>
+        ) : (
+          <GameActions roomId={gameInfo.roomId} side={gameInfo.side} />
+        )}
       </div>
     );
+  };
+
+  if (gameInfo === null) {
+    return <div className="min-h-screen w-full">Loading</div>;
   }
 
   return (
-    <div className="min-h-screen w-full lg:px-6 py-3">
-      {error === "" ? (
-        <Board
-          side={data?.side}
-          roomId={data?.roomId}
-          players={players}
-          key={data?.roomId + data?.side + rematch}
-          time={timeSesonds}
-        />
-      ) : (
-        <div className="h-full w-full flex items-center justify-center">
-          {error}
-        </div>
-      )}
+    <div className="min-h-screen w-full">
+      <Board
+        game={game}
+        key={gameInfo?.side + gameInfo.roomId}
+        boardOrientation={gameInfo?.side}
+        afterMove={pieceMoved}
+        customComponent={true}
+        renderCustomComponent={renderComponents}
+        gameOver={gameOver}
+      />
     </div>
   );
 };

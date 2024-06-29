@@ -2,19 +2,24 @@ import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import sounds from "@/components/game/assets/sounds"; //Board Sounds
 import PreviousMoves from "@/components/game/Board/PreviousMoves";
+import EvalBar from "../../../../components/game/Board/EvalBar";
 
 const Board = ({
   game,
   afterMove,
   customComponent,
   renderCustomComponent,
+  showEvalBar,
+  evaluation,
+  allowMoveOpponentPieces,
+  gameOver,
   ...rest
 }) => {
   const [boardFen, setBoardFen] = useState(game.fen()); // Just for rerender
   const [currentSound, setCurrentSound] = useState(null);
   const [moves, setMoves] = useState([]);
 
-  const handleDrop = (sourceSquare, targetSquare, piece) => {
+  const makeMove = (sourceSquare, targetSquare, piece) => {
     try {
       const move = game.move({
         from: sourceSquare,
@@ -24,16 +29,34 @@ const Board = ({
       setBoardFen(game.fen());
       setMoves((prevMoves) => [...prevMoves, move]);
       handleSound(move);
-      afterMove();
-      return true;
+      return move;
     } catch (error) {
-      return false;
+      return null;
     }
+  };
+  const handleDrop = (sourceSquare, targetSquare, piece) => {
+    if (gameOver) {
+      return;
+    }
+
+    const side = { ...rest }.boardOrientation;
+    const pieceColour = piece[0];
+
+    // Using a prop you can control the user from moving opponent pieces
+    if (!allowMoveOpponentPieces) {
+      if (side === "black" && pieceColour !== "b") {
+        return;
+      } else if (side === "white" && pieceColour !== "w") {
+        return;
+      }
+    }
+    const move = makeMove(sourceSquare, targetSquare, piece);
+    if (move === null) return;
+    afterMove(move);
   };
 
   const handleSound = (move) => {
     if (game.isCheckmate()) {
-      setGameover(true);
       setIsBlackPaused(true);
       setIsWhitePaused(true);
       playSound(sounds.CheckmateSound);
@@ -43,7 +66,7 @@ const Board = ({
       playSound(sounds.capturePieceSound);
     } else if (move.promotion) {
       playSound(sounds.PromotionSound);
-    } else if (move.san === "O-O") {
+    } else if (move.san === "O-O" || move.san === "O-O-O") {
       playSound(sounds.CastlingSound);
     } else {
       playSound(sounds.SimpleMoveSound);
@@ -51,14 +74,14 @@ const Board = ({
   };
 
   const playSound = (sound) => {
-    console.log("Playing Sound");
     setCurrentSound(sound);
   };
 
   return (
     <section className="h-full w-full flex flex-col lg:flex-row gap-6">
       <audio autoPlay src={currentSound} />
-      <div className="w-full">
+      <div className="w-full flex items-center gap-3">
+        {showEvalBar && <EvalBar evaluation={evaluation} />}
         <Chessboard
           id={"Analysis board"}
           onPieceDrop={handleDrop}

@@ -1,7 +1,7 @@
 import React from "react";
 import gameFormats from "./gameFormats";
-import CreateGame from "@/components/game/CreateGame";
-import PLayWithFriend from "@/components/game/PLayWithFriend";
+import CreateGame from "@/components/game/online/CreateGame";
+import PLayWithFriend from "@/components/game/online/PLayWithFriend";
 import Link from "next/link";
 import { FaFish } from "react-icons/fa";
 

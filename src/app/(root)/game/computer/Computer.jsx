@@ -1,39 +1,62 @@
 "use client";
 import { Chess } from "chess.js";
-import Board from "@/app/(root)/analysis/Board";
+import Board from "@/components/game/Board";
 import { useCallback, useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import SideSelectionDialog from "@/components/reuseable/SideSelection";
-import fetchBestMove from "@/utils/engine/bestmove";
+import { useStockfish } from "@/utils/engine";
 
 const Analysis = () => {
   const [game, setGame] = useState(new Chess());
   const [side, setSide] = useState("");
   const [loading, setLoading] = useState(false);
+  const { stockfish, sendCommand, loadEngine } = useStockfish();
+  const [engineLoaded, setEngineLoaded] = useState(false);
+
+  const handleLoadEngine = () => {
+    loadEngine();
+    setEngineLoaded(true);
+  };
 
   const handleNewGame = () => {
     window.location.reload();
   };
 
   useEffect(() => {
+    if (stockfish) {
+      stockfish.onmessage = (event) => {
+        const message = event.data;
+        if (message.startsWith("bestmove")) {
+          const bestMove = message.split(" ")[1];
+          const from = bestMove.slice(0, 2);
+          const to = bestMove.slice(2);
+          game.move({
+            from,
+            to,
+          });
+          setLoading(false);
+        }
+      };
+    }
+
     if (side === "black") {
       getBestMove();
     }
-  }, [side]);
 
-  const getBestMove = useCallback(async () => {
-    setLoading(true);
-    const res = await fetchBestMove(game.fen());
-    const move = res.bestmove;
-    const from = move.slice(0, 2);
-    const to = move.slice(2);
-    game.move({
-      from,
-      to,
-      promotion: "q",
-    });
-    setLoading(false);
-  }, []);
+    // Initialize Stockfish
+    sendCommand("uci");
+    sendCommand("isready");
+  }, [side, stockfish, sendCommand]);
+
+  const getBestMove = useCallback(
+    async (recievedMove) => {
+      setLoading(true);
+      if (!stockfish) return;
+      sendCommand(`position fen ${game.fen()}`);
+      sendCommand("go depth 15");
+    },
+    [game, sendCommand, stockfish]
+  );
 
   const handleSetSide = (selectedSide) => {
     setSide(selectedSide);
@@ -42,22 +65,33 @@ const Analysis = () => {
   const CustomComponent = () => {
     return (
       <div className="w-full h-full py-4">
-        <div className="loader h-14">
-          {loading && (
-            <div className="flex gap-4">
-              <p>Thnking</p>
-              <FaSpinner size={30} className="animate-spin" />
-            </div>
-          )}
-        </div>
-        <div className="buttons">
+        {!engineLoaded ? (
           <button
-            className="px-4 p-2 rounded-md bg-yellow-500"
-            onClick={handleNewGame}
+            onClick={handleLoadEngine}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            New Game
+            Load Engine
           </button>
-        </div>
+        ) : (
+          <>
+            <div className="loader h-14">
+              {loading && (
+                <div className="flex gap-4">
+                  <p>Thnking</p>
+                  <FaSpinner size={30} className="animate-spin" />
+                </div>
+              )}
+            </div>
+            <div className="buttons">
+              <button
+                className="px-4 p-2 rounded-md bg-yellow-500"
+                onClick={handleNewGame}
+              >
+                New Game
+              </button>
+            </div>
+          </>
+        )}
       </div>
     );
   };
@@ -74,6 +108,7 @@ const Analysis = () => {
           boardOrientation={side}
           customComponent={true}
           renderCustomComponent={CustomComponent}
+          allowMoveOpponentPieces={false}
         />
       )}
     </div>
