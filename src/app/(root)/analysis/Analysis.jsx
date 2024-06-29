@@ -1,6 +1,6 @@
 "use client";
 import { Chess } from "chess.js";
-import Board from "../../../components/game/Board";
+import Board from "@/components/game/Board";
 import { useCallback, useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { useStockfish } from "@/utils/engine";
