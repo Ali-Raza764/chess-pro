@@ -1,6 +1,10 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import Play from "./Play";
+import dynamic from "next/dynamic";
+const Play = dynamic(() => import("./Play"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 
 const page = ({ searchParams }) => {
   const roomId = searchParams.roomId;

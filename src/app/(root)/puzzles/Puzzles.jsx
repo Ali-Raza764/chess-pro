@@ -14,6 +14,7 @@ const Puzzles = ({ puzzles }) => {
   const [puzzleEnd, setPuzzleEnd] = useState(false);
   const [side, setSide] = useState("white");
   const [puzzlesCompleted, setPuzzlesCompleted] = useState(0);
+  const [arrows, setArrows] = useState([]);
   const { currentSound, handleSound } = useSound(game); // Use the custom hook
 
   const Chooseside = useCallback(() => {
@@ -74,6 +75,7 @@ const Puzzles = ({ puzzles }) => {
 
   const handleDrop = (sourceSquare, targetSquare, piece) => {
     // Stop user from moving opponent pieces
+    setArrows([]);
     if (game.turn()[0] !== piece[0]) return false;
 
     const move = sourceSquare + targetSquare;
@@ -95,6 +97,14 @@ const Puzzles = ({ puzzles }) => {
     } catch (error) {
       return false;
     }
+  };
+
+  const getHint = () => {
+    const moves = puzzles[currentPuzzle]?.Moves.split(" ") || [];
+    const move = moves[moveNumber];
+    const from = move.slice(0, 2);
+    const to = move.slice(2);
+    setArrows([[from, to, "green"]]);
   };
 
   if (!puzzles || puzzles.length === 0) {
@@ -133,12 +143,15 @@ const Puzzles = ({ puzzles }) => {
           boardOrientation={side}
           boardWidth={500}
           onPieceDrop={handleDrop}
+          customArrows={arrows}
+          // customSquare={}
         />
       </div>
       <div className="w-full">
         <div className="w-full p-6 text-xl font-semibold font-sans">
           {message && <p>{message}</p>}
         </div>
+        <div className="w-full p-6"></div>
 
         <div className="w-full p-6">
           {invalidMove && (
@@ -157,7 +170,7 @@ const Puzzles = ({ puzzles }) => {
           )}
         </div>
         <div className="w-full p-6">
-          {puzzleEnd && (
+          {puzzleEnd ? (
             <button
               onClick={() => {
                 setCurrentPuzzle(currentPuzzle + 1);
@@ -170,6 +183,10 @@ const Puzzles = ({ puzzles }) => {
               className="px-4 p-2 text-md font-semibold text-white bg-green-500 rounded-md"
             >
               Next Puzzle
+            </button>
+          ) : (
+            <button className="px-5 p-3 border rounded-md" onClick={getHint}>
+              Hint
             </button>
           )}
         </div>

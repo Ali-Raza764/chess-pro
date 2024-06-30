@@ -2,7 +2,7 @@
 import { socket } from "@/utils/socket/socket";
 import { Chess } from "chess.js";
 import React, { useEffect, useState } from "react";
-import Board from "../../../components/game/Board";
+import Board from "@/components/game/Board";
 import Users from "@/components/game/online/Users";
 import GameActions from "@/components/game/online/GameActions";
 import CreateGame from "@/components/game/online/CreateGame";
