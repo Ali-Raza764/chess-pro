@@ -1,9 +1,10 @@
-import React from 'react'
+import Puzzles from "./Puzzles";
 
-const Puzzles = () => {
-  return (
-    <div>Puzzles</div>
-  )
-}
+const PuzzlesPage = async () => {
+  const res = await fetch(`${process.env.NEXT_PUZZLES_API_URl}/puzzles?limit=50`);
+  const puzzles = await res.json();
 
-export default Puzzles
+  return <Puzzles puzzles={puzzles} />;
+};
+
+export default PuzzlesPage;

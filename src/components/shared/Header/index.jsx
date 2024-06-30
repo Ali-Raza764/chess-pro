@@ -24,7 +24,7 @@ const Header = () => {
 
       <div className="flex gap-2 items-center">
         <Link
-          href="/Puzzles"
+          href="/puzzles"
           className="hidden md:block p-2 rounded-full hover:bg-white hover:text-slate-800 transition hover:scale-110"
         >
           <IoExtensionPuzzle size={25} />

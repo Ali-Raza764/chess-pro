@@ -45,7 +45,7 @@ const Analysis = () => {
       // Start analysis immediately after engine is loaded
       getBestMove();
     }
-  }, [stockfish, sendCommand]);
+  }, [stockfish, sendCommand, game]);
 
   const getBestMove = useCallback(() => {
     if (!stockfish) return;

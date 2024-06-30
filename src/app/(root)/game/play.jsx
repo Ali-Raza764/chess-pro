@@ -65,7 +65,7 @@ const Play = ({ roomId, timeSesonds, type }) => {
       setGameOver(false);
       setGame(new Chess());
     });
-  }, [roomId, game, rematch]);
+  }, [roomId, game, rematch, gameInfo, players]);
 
   const pieceMoved = async (madeMove) => {
     socket.emit("move", madeMove, gameInfo?.roomId);

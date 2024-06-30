@@ -13,6 +13,7 @@ const Board = ({
   evaluation,
   allowMoveOpponentPieces,
   gameOver,
+  showPreviousMoves,
   ...rest
 }) => {
   const [boardFen, setBoardFen] = useState(game.fen()); // Just for rerender
@@ -44,11 +45,7 @@ const Board = ({
 
     // Using a prop you can control the user from moving opponent pieces
     if (!allowMoveOpponentPieces) {
-      if (side === "black" && pieceColour !== "b") {
-        return;
-      } else if (side === "white" && pieceColour !== "w") {
-        return;
-      }
+      if (game.turn()[0] !== piece[0]) return false;
     }
     const move = makeMove(sourceSquare, targetSquare, piece);
     if (move === null) return;
@@ -94,7 +91,7 @@ const Board = ({
         />
       </div>
       <div className="w-full h-full flex flex-col-reverse lg:flex-col">
-        <PreviousMoves moves={moves} />
+        {showPreviousMoves && <PreviousMoves moves={moves} />}
         {customComponent && renderCustomComponent()}
       </div>
     </section>
