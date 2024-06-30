@@ -2,13 +2,13 @@
 import { socket } from "@/utils/socket/socket";
 import { Chess } from "chess.js";
 import React, { useEffect, useState } from "react";
-import Board from "@/components/game/Board";
+import Board from "../../../components/game/Board";
 import Users from "@/components/game/online/Users";
 import GameActions from "@/components/game/online/GameActions";
 import CreateGame from "@/components/game/online/CreateGame";
 import RematchButton from "@/components/game/online/RematchButton";
 
-const Play = ({ roomId, timeSesonds, type }) => {
+const PlayComponent = ({ roomId, timeSesonds, type }) => {
   const [game, setGame] = useState(new Chess());
   const [gameInfo, setGameInfo] = useState(null);
   const [players, setPlayers] = useState(null);
@@ -65,7 +65,7 @@ const Play = ({ roomId, timeSesonds, type }) => {
       setGameOver(false);
       setGame(new Chess());
     });
-  }, [roomId, game, rematch, gameInfo, players]);
+  }, [roomId, game, rematch]);
 
   const pieceMoved = async (madeMove) => {
     socket.emit("move", madeMove, gameInfo?.roomId);
@@ -106,4 +106,4 @@ const Play = ({ roomId, timeSesonds, type }) => {
   );
 };
 
-export default Play;
+export default PlayComponent;

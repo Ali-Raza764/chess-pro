@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Play from "./Play";
+import PlayComponent from "./PlayComponent";
 
 const GamePage = ({ searchParams }) => {
   const roomId = searchParams.roomId;
@@ -9,7 +9,7 @@ const GamePage = ({ searchParams }) => {
   if (!roomId || !time || roomId === undefined || time === undefined) {
     redirect("/home");
   }
-  return <Play roomId={roomId} timeSesonds={time} type={type} key={roomId} />;
+  return <PlayComponent roomId={roomId} timeSesonds={time} type={type} key={roomId} />;
 };
 
 export default GamePage;
