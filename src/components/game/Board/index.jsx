@@ -45,11 +45,12 @@ const Board = ({
 
     // Using a prop you can control the user from moving opponent pieces
     if (!allowMoveOpponentPieces) {
-      if (game.turn()[0] !== piece[0]) return false;
+      if (side[0] !== piece[0]) return false;
     }
     const move = makeMove(sourceSquare, targetSquare, piece);
-    if (move === null) return;
+    if (move === null) return false;
     afterMove(move);
+    return true;
   };
 
   const handleSound = (move) => {

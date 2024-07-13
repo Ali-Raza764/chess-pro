@@ -9,7 +9,7 @@ const Waiting = () => {
       };
     
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full flex items-center justify-center">
       <div className="h-[25rem] w-[25rem] flex items-center justify-center flex-col gap-4">
         <p className="text-lg font-medium">
           Waiting fot Other Player To Join the game

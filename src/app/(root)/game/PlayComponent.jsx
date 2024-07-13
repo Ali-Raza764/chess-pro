@@ -7,6 +7,8 @@ import Users from "@/components/game/online/Users";
 import GameActions from "@/components/game/online/GameActions";
 import CreateGame from "@/components/game/online/CreateGame";
 import RematchButton from "@/components/game/online/RematchButton";
+import useSound from "@/utils/hooks/useSound";
+import Waiting from "./Waiting";
 
 const PlayComponent = ({ roomId, timeSesonds, type }) => {
   const [game, setGame] = useState(new Chess());
@@ -14,6 +16,7 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
   const [players, setPlayers] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [rematch, setRematch] = useState(false);
+  const { currentSound, handleSound } = useSound(game); // Use the custom hook
 
   const setOpponentPieces = (move) => {
     try {
@@ -47,7 +50,15 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
           console.error("Failed to fetch users:", response.message);
         }
       });
+      if (type === "link") {
+        socket.emit("player_connected", roomId);
+      }
     }
+
+    //* Handle new player join in link mode
+    socket.on("player_joined", (response) => {
+      setPlayers(response.players);
+    });
 
     //* Handle the Remote opponent Move
     socket.on("opponentMoved", (move) => {
@@ -56,6 +67,7 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
 
     //*Handle Opponent Resignation
     socket.on("sendresign", (res) => {
+      console.log("resign called");
       setGameOver(true);
     });
 
@@ -69,6 +81,7 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
 
   const pieceMoved = async (madeMove) => {
     socket.emit("move", madeMove, gameInfo?.roomId);
+    handleSound(madeMove);
   };
 
   const renderComponents = () => {
@@ -91,8 +104,13 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
     return <div className="min-h-screen w-full">Loading</div>;
   }
 
+  if (type === "link" && players?.length < 2) {
+    return <Waiting />;
+  }
+
   return (
     <div className="min-h-screen w-full">
+      <audio autoPlay src={currentSound} />
       <Board
         game={game}
         key={gameInfo?.side + gameInfo.roomId}
@@ -101,6 +119,8 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
         customComponent={true}
         renderCustomComponent={renderComponents}
         gameOver={gameOver}
+        allowMoveOpponentPieces={false}
+        showPreviousMoves={true}
       />
     </div>
   );
