@@ -76,14 +76,14 @@ const Board = ({
   };
 
   return (
-    <section className="h-full w-full flex flex-col lg:flex-row gap-6">
+    <section className="h-full w-full lg:flex gap-6 items-center justify-center">
       <audio autoPlay src={currentSound} />
-      <div className="w-full flex items-center gap-3">
+      <div className="w-full flex items-center justify-center gap-3">
         {showEvalBar && <EvalBar evaluation={evaluation} />}
         <Chessboard
           id={"Analysis board"}
           onPieceDrop={handleDrop}
-          boardWidth={500}
+          boardWidth={450}
           position={game.fen()}
           customBoardStyle={{
             borderRadius: "4px",

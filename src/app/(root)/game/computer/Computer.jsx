@@ -46,6 +46,7 @@ const Analysis = () => {
     // Initialize Stockfish
     sendCommand("uci");
     sendCommand("isready");
+    handleLoadEngine();
   }, [side, stockfish, sendCommand, game]);
 
   const getBestMove = useCallback(

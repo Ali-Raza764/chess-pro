@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         <NextTopLoader showSpinner={false} color="#eab308" />
         <Header />
         {children}
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );

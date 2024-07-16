@@ -101,7 +101,7 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
   };
 
   if (gameInfo === null) {
-    return <div className="min-h-screen w-full">Loading</div>;
+    return <div className="min-h-screen w-full overflow-hidden">Loading</div>;
   }
 
   if (type === "link" && players?.length < 2) {
@@ -109,7 +109,7 @@ const PlayComponent = ({ roomId, timeSesonds, type }) => {
   }
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="h-full w-full flex items-center justify-center md:p-6">
       <audio autoPlay src={currentSound} />
       <Board
         game={game}

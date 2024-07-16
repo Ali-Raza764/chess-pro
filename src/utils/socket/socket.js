@@ -1,6 +1,15 @@
 import { io } from "socket.io-client";
 
-// "undefined" means the URL will be computed from the `window.location` object
-const URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000' ;
+let URL;
+
+if (process.env.NODE_ENV === "development") {
+
+  URL = "http://localhost:3000";
+
+} else if (process.env.NODE_ENV === "production") {
+
+  URL = process.env.NEXT_PUBLIC_SERVER_URL;
+  
+}
 
 export const socket = io(URL);
